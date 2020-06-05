@@ -57,9 +57,6 @@ namespace nasa_apod_background
                     using (Stream imageStream = await httpResponseMessage.Content.ReadAsStreamAsync())
                     using (Image image = Image.FromStream(imageStream))
                     {
-                        if (image.Width < image.Height)
-                            image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-
                         // save image
                         image.Save(fileName, ImageFormat.Bmp);
 
