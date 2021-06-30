@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B5B3F9C2268AC2330034DD3F /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B3F9C1268AC2330034DD3F /* main.swift */; };
+		B5D0B9ED268CEA7200C08516 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5D0B9EB268CEA1200C08516 /* AppKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		B5B3F9BE268AC2330034DD3F /* nasa_apod_background */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nasa_apod_background; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5B3F9C1268AC2330034DD3F /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		B5D0B9E9268CEA0C00C08516 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		B5D0B9EB268CEA1200C08516 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5D0B9ED268CEA7200C08516 /* AppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +47,7 @@
 			children = (
 				B5B3F9C0268AC2330034DD3F /* nasa_apod_background */,
 				B5B3F9BF268AC2330034DD3F /* Products */,
+				B5D0B9E8268CEA0C00C08516 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +65,15 @@
 				B5B3F9C1268AC2330034DD3F /* main.swift */,
 			);
 			path = nasa_apod_background;
+			sourceTree = "<group>";
+		};
+		B5D0B9E8268CEA0C00C08516 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B5D0B9EB268CEA1200C08516 /* AppKit.framework */,
+				B5D0B9E9268CEA0C00C08516 /* Cocoa.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
