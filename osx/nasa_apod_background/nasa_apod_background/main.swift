@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 
 let endpoint: String = "https://api.nasa.gov"
-let apiKey: String = "<REDACTED>" /* use 'DEMO_KEY' */
+let apiKey: String = "DEMO_KEY" /* use 'DEMO_KEY' */
 
 let urlFormatString = "%@/planetary/apod?date=%@&api_key=%@&hd=true"
 let dateFormatString = "yyyy-MM-dd"
@@ -18,20 +18,30 @@ func getURL() -> String
     return urlString
 }
 
-func getAPODResponse() -> APODObject
+func getAPODResponse() -> APODObject?
 {
-    let url = getURL()
+    let url = URL(string: getURL())!
     
-    /* TODO */
+    var ret: APODObject = APODObject()
     
-    return APODObject()
+    let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        
+        if (error == nil) {
+            ret = APODObject.fromJSON(json: data!)
+        }
+        
+    }
+    
+    task.resume()
+    
+    while (!task.progress.isFinished) { }
+    
+    return ret
 }
 
 func saveImage(url: String) -> NSURL
 {
     let fileName: NSURL = NSURL(fileURLWithPath: String(format: "%@wallpaper.bmp", NSTemporaryDirectory()))
-    
-    /* TODO */
     
     return fileName
 }
@@ -42,7 +52,9 @@ func setBackground(path: NSURL) -> Void
     {
         let imgURL: URL = NSURL.fileURL(withPath: path.absoluteString!)
         let workspace: NSWorkspace = NSWorkspace.shared
-        if let screen: NSScreen = NSScreen.main {
+        
+        if let screen: NSScreen = NSScreen.main
+        {
             try workspace.setDesktopImageURL(imgURL, for: screen, options: [:])
         }
     }
@@ -54,17 +66,17 @@ func setBackground(path: NSURL) -> Void
 
 func main() -> Void
 {
-    let apodObject: APODObject = getAPODResponse()
+    let apodObject: APODObject? = getAPODResponse()
 
-    if (apodObject.media_type == "image")
+    if (apodObject != nil && apodObject!.media_type == "image")
     {
-        let imagePath: NSURL = saveImage(url: apodObject.hdurl!)
+        let imagePath: NSURL = saveImage(url: apodObject!.hdurl!)
 
         setBackground(path: imagePath)
     }
 }
 
-class APODObject
+class APODObject : Decodable
 {
     init()
     {
@@ -76,6 +88,22 @@ class APODObject
         service_version = nil
         title = nil
         url = nil
+    }
+    
+    static func fromJSON(json: Data) -> APODObject {
+        
+        let decoder = JSONDecoder()
+        
+        var ret: APODObject
+        
+        do {
+            ret = try decoder.decode(APODObject.self, from: json)
+        } catch {
+            ret = APODObject()
+        }
+        
+        return ret
+        
     }
     
     let copyright: String?
