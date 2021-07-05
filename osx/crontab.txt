@@ -1,0 +1,1 @@
+10 0 * * * cd ~/apod && ./nasa_apod_background
