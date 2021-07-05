@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 
 let endpoint: String = "https://api.nasa.gov"
-let apiKey: String = "DEMO_KEY" /* use 'DEMO_KEY' */
+let apiKey: String = "<REDACTED>" /* use 'DEMO_KEY' */
 
 let urlFormatString = "%@/planetary/apod?date=%@&api_key=%@&hd=true"
 let dateFormatString = "yyyy-MM-dd"
@@ -24,44 +24,71 @@ func getAPODResponse() -> APODObject?
     
     var ret: APODObject = APODObject()
     
+    let group = DispatchGroup()
+    group.enter()
+    
     let task = URLSession.shared.dataTask(with: url) { data, response, error in
         
         if (error == nil) {
             ret = APODObject.fromJSON(json: data!)
         }
         
+        group.leave()
+        
     }
     
     task.resume()
-    
-    while (!task.progress.isFinished) { }
+    group.wait()
     
     return ret
 }
 
-func saveImage(url: String) -> NSURL
+func saveImage(url: String) -> URL?
 {
-    let fileName: NSURL = NSURL(fileURLWithPath: String(format: "%@wallpaper.bmp", NSTemporaryDirectory()))
+    var fileName: URL? = URL(fileURLWithPath: String(format: "%@wallpaper.bmp", NSTemporaryDirectory()))
+    
+    let group = DispatchGroup()
+    group.enter()
+    
+    let task = URLSession.shared.dataTask(with: URL(string: url)!) { data, response, error in
+        
+        if (error == nil) {
+            
+            do {
+                try data?.write(to: fileName!)
+            }
+            catch {
+                fileName = nil
+            }
+            
+        }
+        
+        group.leave()
+        
+    }
+    
+    task.resume()
+    group.wait()
     
     return fileName
 }
 
-func setBackground(path: NSURL) -> Void
+func setBackground(path: URL?) -> Void
 {
     do
     {
-        let imgURL: URL = NSURL.fileURL(withPath: path.absoluteString!)
-        let workspace: NSWorkspace = NSWorkspace.shared
-        
-        if let screen: NSScreen = NSScreen.main
-        {
-            try workspace.setDesktopImageURL(imgURL, for: screen, options: [:])
+        if (path != nil) {
+            let imgURL = path!
+            let workspace: NSWorkspace = NSWorkspace.shared
+            
+            if let screen: NSScreen = NSScreen.main
+            {
+                try workspace.setDesktopImageURL(imgURL, for: screen, options: [:])
+            }
         }
     }
     catch
-    {
-        print(error)
-    }
+    { }
 }
 
 func main() -> Void
@@ -70,7 +97,7 @@ func main() -> Void
 
     if (apodObject != nil && apodObject!.media_type == "image")
     {
-        let imagePath: NSURL = saveImage(url: apodObject!.hdurl!)
+        let imagePath: URL? = saveImage(url: (apodObject?.hdurl ?? apodObject?.url)!)
 
         setBackground(path: imagePath)
     }
